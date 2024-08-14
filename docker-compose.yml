@@ -1,0 +1,41 @@
+version: '3.9'
+services: 
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: zhanina@mail.ru
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - 8080:80
+    restart: always
+
+  go-service:
+    build: 
+      context: .
+    volumes:
+      - .:/build
+    ports:
+      - 3000:3000
+    command: go run main.go
+    depends_on:
+      - postgres
+    restart: always
+
+volumes:
+  pgdata: 
+  pgadmin-data:
+
